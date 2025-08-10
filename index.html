@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>English Decoded — Learning Page</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#f5f7fb;color:#121212}
+    .wrap{max-width:720px;margin:0 auto;padding:20px}
+    header{display:flex;justify-content:space-between;align-items:center}
+    h1{font-size:20px;margin:0}
+    .card{background:#fff;border-radius:12px;padding:18px;margin-top:16px;box-shadow:0 6px 18px rgba(0,0,0,0.06)}
+    .btn{display:inline-block;padding:12px 18px;border-radius:10px;background:#1677ff;color:#fff;border:none;font-size:16px;cursor:pointer}
+    .nav{margin-top:12px;display:flex;gap:8px}
+    .lesson{white-space:pre-wrap;font-size:16px}
+    .small{font-size:13px;color:#666;margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>English Decoded</h1>
+      <button id="closeBtn" class="btn">Close</button>
+    </header>
+
+    <div class="card" id="mainCard">
+      <p style="margin:0 0 12px 0">Welcome — tap below to open Discourse Markers lessons.</p>
+      <button id="dmBtn" class="btn">📌 Discourse Markers</button>
+      <p class="small">This opens inside Telegram. Close the page to return to chat.</p>
+    </div>
+
+    <div class="card" id="lessonCard" style="display:none">
+      <div class="lesson" id="lessonText"></div>
+      <div class="nav">
+        <button id="prevBtn" class="btn">◀ Prev</button>
+        <button id="nextBtn" class="btn">Next ▶</button>
+      </div>
+      <p class="small" style="margin-top:10px">Tap Close above to exit.</p>
+    </div>
+  </div>
+
+<script>
+  // Lessons you can edit easily
+  const lessons = [
+    "Lesson 1: Using 'however' — Example: I wanted to go; however, it rained.",
+    "Lesson 2: Using 'therefore' — Example: It was raining; therefore, we stayed in.",
+    "Lesson 3: Using 'meanwhile' — Example: She cooked dinner; meanwhile, he set the table."
+  ];
+  let idx = 0;
+
+  function showLesson(i){
+    idx = i;
+    document.getElementById('lessonText').textContent = lessons[i];
+    document.getElementById('lessonCard').style.display = 'block';
+    document.getElementById('mainCard').style.display = 'none';
+    document.getElementById('prevBtn').disabled = i === 0;
+    document.getElementById('nextBtn').disabled = i === lessons.length - 1;
+    // Expand inside Telegram for better UX (if supported)
+    if(window.Telegram && Telegram.WebApp && Telegram.WebApp.expand) Telegram.WebApp.expand();
+  }
+
+  document.getElementById('dmBtn').addEventListener('click', ()=> showLesson(0));
+  document.getElementById('prevBtn').addEventListener('click', ()=> showLesson(Math.max(0, idx - 1)));
+  document.getElementById('nextBtn').addEventListener('click', ()=> showLesson(Math.min(lessons.length - 1, idx + 1)));
+  document.getElementById('closeBtn').addEventListener('click', ()=>{
+    if(window.Telegram && Telegram.WebApp && Telegram.WebApp.close) Telegram.WebApp.close();
+    else window.close();
+  });
+
+  // If opened inside Telegram WebApp, initialize
+  window.addEventListener('load', ()=>{
+    if(window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) {
+      try { Telegram.WebApp.ready(); } catch(e){}
+      // optional: you can read user info with Telegram.WebApp.initDataUnsafe.user
+    }
+  });
+</script>
+</body>
+</html>
